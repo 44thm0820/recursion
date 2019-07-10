@@ -4,8 +4,10 @@
 // };
 
 // But instead we're going to implement it from scratch:
-var getElementsByClassName = function(className) {
+var getElementsByClassName = function(className, node) {
+  
   let arrElementsWithClassName = [];
+  node = node || document.body;
   //above will not become an array but an HTMLCollection object when filled
   //The HTMLCollection interface represents a generic collection
   //(array-like object similar to arguments) of elements (in document order)
@@ -15,7 +17,7 @@ var getElementsByClassName = function(className) {
   //  HTMLCollection.item() returns the specific node at the given zero-based
   //   index into the list. 
 
-  function findElementsWithClassName(element) {
+  // function findElementsWithClassName(element) {
     //Element.classList is a read-only property that returns
     //a live DOMTokenList collection of the class attributes of the element.
     
@@ -25,18 +27,25 @@ var getElementsByClassName = function(className) {
     //HTMLIframeElement.sandbox, or HTMLOutputElement.htmlFor.
     //It is indexed beginning with 0 as with JavaScript Array objects.
     //DOMTokenList is always case-sensitive.
-    if (element.classList && element.classList.contains(className)) {
-      arrElementsWithClassName.push(element);
+    let parts = node.className.split(' ');
+    if (parts.indexOf( className ) >= 0) {
+    // if (element.classList && element.classList.contains(className)) {
+      // if matched, save node
+      arrElementsWithClassName.push(node);
+      // arrElementsWithClassName.push(element);
     }
     //childNodes is a NodeList - loop using a for loop, forEach, for...of
     //Don't use for...in  per MDN
     // element.childNodes.forEach( child => findElementsWithClassName(child) );
-    for (let child of element.childNodes) {
-      findElementsWithClassName(child);
+    for (let child of node.children) {
+    // for (let child of element.childNodes) {
+      // findElementsWithClassName(child);
+      let childResults = getElementsByClassName(className, child);
+      arrElementsWithClassName = arrElementsWithClassName.concat(childResults);
     }
-  }
+  
 
-  findElementsWithClassName(document.body);
+  // findElementsWithClassName(document.body);
   return arrElementsWithClassName;
 };
 
